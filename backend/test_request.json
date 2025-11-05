@@ -1,0 +1,16 @@
+{
+  "age": 24,
+  "gender": "Male",
+  "education": "High School",
+  "income": 10000,
+  "employmentExperience": 0,
+  "homeOwnership": "RENT",
+  "loanAmount": 30000,
+  "loanIntent": "PERSONAL",
+  "interestRate": 20.0,
+  "loanPercentageIncome": 3.0,
+  "creditHistoryLength": 1,
+  "creditScore": 500,
+  "previousLoanDefault": "No",
+  "timestamp": "2025-10-28T15:07:00.000Z"
+}
