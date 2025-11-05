@@ -27,4 +27,4 @@ services:
       - key: NODE_VERSION
         value: 18.17.0
       - key: NEXT_PUBLIC_API_URL
-        value: https://loan-engine-api.onrender.com
+        value: https://ml-loan-engine-api.onrender.com
