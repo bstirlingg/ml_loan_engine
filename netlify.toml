@@ -10,7 +10,7 @@
 
 # Environment variables
 [build.environment]
-  NEXT_PUBLIC_API_URL = "https://ml-loan-engine-api.onrender.com"
+  NEXT_PUBLIC_API_URL = "https://ml-loan-engine.onrender.com"
   NODE_VERSION = "18"
 
 # Use Netlify's Essential Next.js plugin
