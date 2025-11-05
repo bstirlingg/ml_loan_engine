@@ -1,4 +1,5 @@
 services:
+  # Backend API Service
   - type: web
     name: loan-engine-api
     runtime: python
@@ -11,3 +12,19 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+
+  # Frontend Next.js Service
+  - type: web
+    name: loan-engine-frontend
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    rootDir: front-end
+    buildCommand: yarn install && yarn build
+    startCommand: yarn start
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: NEXT_PUBLIC_API_URL
+        value: https://loan-engine-api.onrender.com
