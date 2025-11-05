@@ -1,0 +1,18 @@
+[build]
+  # Base directory is where the frontend code lives
+  base = "front-end"
+
+  # Build command for Next.js
+  command = "npm run build"
+
+
+  publish = ".next"
+
+# Environment variables
+[build.environment]
+  NEXT_PUBLIC_API_URL = "https://ml-loan-engine-api.onrender.com"
+  NODE_VERSION = "18"
+
+# Use Netlify's Essential Next.js plugin
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
