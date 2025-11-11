@@ -21,7 +21,7 @@ app = FastAPI(
 # Configure CORS - allow requests from any origin
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific domain
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,9 +34,9 @@ try:
     model = joblib.load(MODEL_DIR / "loan_model_rf.pkl")
     model_columns = joblib.load(MODEL_DIR / "model_columns_rf.pkl")
     scaler = joblib.load(MODEL_DIR / "scaler_rf.pkl")
-    logger.info("✅ ML model loaded successfully")
+    logger.info("ML model loaded successfully")
 except Exception as e:
-    logger.error(f"❌ Failed to load ML model: {e}")
+    logger.error(f" Failed to load ML model: {e}")
     model = None
     model_columns = None
     scaler = None
