@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calculator, Loader2 } from "lucide-react"
+import { Calculator, Loader2, AlertCircle } from 'lucide-react'
 
 export function ApplicantForm({ onEvaluate, isEvaluating }) {
   const [formData, setFormData] = useState({
@@ -25,6 +25,17 @@ export function ApplicantForm({ onEvaluate, isEvaluating }) {
   })
 
   const [errors, setErrors] = useState({})
+  const [focusedField, setFocusedField] = useState(null)
+
+  const validationRules = {
+    age: { min: 0, max: 100, hint: "Enter 0 to 100" },
+    income: { min: 0, max: 10000000, hint: "Enter $0 to $10,000,000" },
+    employmentExperience: { min: 0, max: 30, hint: "Enter 0 to 30 years" },
+    loanAmount: { min: 0, max: 10000000, hint: "Enter $0 to $10,000,000" },
+    interestRate: { min: 0, max: 100, hint: "Enter 0% to 100%" },
+    creditHistoryLength: { min: 0, max: 100, hint: "Enter 0 to 100 years" },
+    creditScore: { min: 0, max: 1000, hint: "Enter 300 to 1000" },
+  }
 
   const calculateLoanPercentageIncome = () => {
     const income = Number.parseFloat(formData.income) || 0
@@ -77,6 +88,28 @@ export function ApplicantForm({ onEvaluate, isEvaluating }) {
     }
   }
 
+  const InputWithHint = ({ id, label, hint, ...inputProps }) => (
+    <div>
+      <Label htmlFor={id} className="text-xs sm:text-sm font-medium">
+        {label}
+      </Label>
+      <Input
+        id={id}
+        {...inputProps}
+        onFocus={() => setFocusedField(id)}
+        onBlur={() => setFocusedField(null)}
+        className={`mt-1 sm:mt-2 text-sm ${errors[id] ? "border-destructive" : ""}`}
+      />
+      {focusedField === id && hint && (
+        <div className="flex items-center gap-2 mt-2 p-2 bg-blue-500/10 border border-blue-500/20 rounded text-xs text-blue-600 dark:text-blue-400">
+          <AlertCircle className="h-3 w-3 flex-shrink-0" />
+          {hint}
+        </div>
+      )}
+      {errors[id] && <p className="text-xs text-destructive mt-1">{errors[id]}</p>}
+    </div>
+  )
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
       {/* Personal Information */}
@@ -90,21 +123,16 @@ export function ApplicantForm({ onEvaluate, isEvaluating }) {
         <Card className="bg-card/50 border-border/50">
           <CardContent className="pt-4 sm:pt-6 space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
-                <Label htmlFor="age" className="text-xs sm:text-sm font-medium">
-                  Age *
-                </Label>
-                <Input
-                  id="age"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={formData.age}
-                  onChange={(e) => updateField("age", e.target.value)}
-                  className={`mt-1 sm:mt-2 text-sm ${errors.age ? "border-destructive" : ""}`}
-                />
-                {errors.age && <p className="text-xs text-destructive mt-1">{errors.age}</p>}
-              </div>
+              <InputWithHint
+                id="age"
+                label="Age *"
+                type="number"
+                min="0"
+                max="100"
+                value={formData.age}
+                onChange={(e) => updateField("age", e.target.value)}
+                hint={validationRules.age.hint}
+              />
               <div>
                 <Label htmlFor="gender" className="text-xs sm:text-sm font-medium">
                   Gender *
@@ -153,39 +181,27 @@ export function ApplicantForm({ onEvaluate, isEvaluating }) {
         </h3>
         <Card className="bg-card/50 border-border/50">
           <CardContent className="pt-4 sm:pt-6 space-y-3 sm:space-y-4">
-            <div>
-              <Label htmlFor="income" className="text-xs sm:text-sm font-medium">
-                Income ($) *
-              </Label>
-              <Input
-                id="income"
+            <InputWithHint
+              id="income"
+              label="Income ($) *"
+              type="number"
+              min="0"
+              max="10000000"
+              value={formData.income}
+              onChange={(e) => updateField("income", e.target.value)}
+              hint={validationRules.income.hint}
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <InputWithHint
+                id="employmentExperience"
+                label="Experience (Yrs) *"
                 type="number"
                 min="0"
-                max="10000000"
-                value={formData.income}
-                onChange={(e) => updateField("income", e.target.value)}
-                className={`mt-1 sm:mt-2 text-sm ${errors.income ? "border-destructive" : ""}`}
+                max="30"
+                value={formData.employmentExperience}
+                onChange={(e) => updateField("employmentExperience", e.target.value)}
+                hint={validationRules.employmentExperience.hint}
               />
-              {errors.income && <p className="text-xs text-destructive mt-1">{errors.income}</p>}
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
-                <Label htmlFor="employmentExperience" className="text-xs sm:text-sm font-medium">
-                  Experience (Yrs) *
-                </Label>
-                <Input
-                  id="employmentExperience"
-                  type="number"
-                  min="0"
-                  max="30"
-                  value={formData.employmentExperience}
-                  onChange={(e) => updateField("employmentExperience", e.target.value)}
-                  className={`mt-1 sm:mt-2 text-sm ${errors.employmentExperience ? "border-destructive" : ""}`}
-                />
-                {errors.employmentExperience && (
-                  <p className="text-xs text-destructive mt-1">{errors.employmentExperience}</p>
-                )}
-              </div>
               <div>
                 <Label htmlFor="homeOwnership" className="text-xs sm:text-sm font-medium">
                   Home Ownership *
@@ -219,37 +235,27 @@ export function ApplicantForm({ onEvaluate, isEvaluating }) {
         <Card className="bg-card/50 border-border/50">
           <CardContent className="pt-4 sm:pt-6 space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
-                <Label htmlFor="loanAmount" className="text-xs sm:text-sm font-medium">
-                  Loan Amount ($) *
-                </Label>
-                <Input
-                  id="loanAmount"
-                  type="number"
-                  min="0"
-                  max="10000000"
-                  value={formData.loanAmount}
-                  onChange={(e) => updateField("loanAmount", e.target.value)}
-                  className={`mt-1 sm:mt-2 text-sm ${errors.loanAmount ? "border-destructive" : ""}`}
-                />
-                {errors.loanAmount && <p className="text-xs text-destructive mt-1">{errors.loanAmount}</p>}
-              </div>
-              <div>
-                <Label htmlFor="interestRate" className="text-xs sm:text-sm font-medium">
-                  Interest Rate (%) *
-                </Label>
-                <Input
-                  id="interestRate"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.interestRate}
-                  onChange={(e) => updateField("interestRate", e.target.value)}
-                  className={`mt-1 sm:mt-2 text-sm ${errors.interestRate ? "border-destructive" : ""}`}
-                />
-                {errors.interestRate && <p className="text-xs text-destructive mt-1">{errors.interestRate}</p>}
-              </div>
+              <InputWithHint
+                id="loanAmount"
+                label="Loan Amount ($) *"
+                type="number"
+                min="0"
+                max="10000000"
+                value={formData.loanAmount}
+                onChange={(e) => updateField("loanAmount", e.target.value)}
+                hint={validationRules.loanAmount.hint}
+              />
+              <InputWithHint
+                id="interestRate"
+                label="Interest Rate (%) *"
+                type="number"
+                step="0.01"
+                min="0"
+                max="100"
+                value={formData.interestRate}
+                onChange={(e) => updateField("interestRate", e.target.value)}
+                hint={validationRules.interestRate.hint}
+              />
             </div>
             <div>
               <Label htmlFor="loanIntent" className="text-xs sm:text-sm font-medium">
@@ -293,38 +299,26 @@ export function ApplicantForm({ onEvaluate, isEvaluating }) {
         <Card className="bg-card/50 border-border/50">
           <CardContent className="pt-4 sm:pt-6 space-y-3 sm:space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <div>
-                <Label htmlFor="creditScore" className="text-xs sm:text-sm font-medium">
-                  Credit Score *
-                </Label>
-                <Input
-                  id="creditScore"
-                  type="number"
-                  min="0"
-                  max="1000"
-                  value={formData.creditScore}
-                  onChange={(e) => updateField("creditScore", e.target.value)}
-                  className={`mt-1 sm:mt-2 text-sm ${errors.creditScore ? "border-destructive" : ""}`}
-                />
-                {errors.creditScore && <p className="text-xs text-destructive mt-1">{errors.creditScore}</p>}
-              </div>
-              <div>
-                <Label htmlFor="creditHistoryLength" className="text-xs sm:text-sm font-medium">
-                  History Length (Yrs) *
-                </Label>
-                <Input
-                  id="creditHistoryLength"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={formData.creditHistoryLength}
-                  onChange={(e) => updateField("creditHistoryLength", e.target.value)}
-                  className={`mt-1 sm:mt-2 text-sm ${errors.creditHistoryLength ? "border-destructive" : ""}`}
-                />
-                {errors.creditHistoryLength && (
-                  <p className="text-xs text-destructive mt-1">{errors.creditHistoryLength}</p>
-                )}
-              </div>
+              <InputWithHint
+                id="creditScore"
+                label="Credit Score *"
+                type="number"
+                min="0"
+                max="1000"
+                value={formData.creditScore}
+                onChange={(e) => updateField("creditScore", e.target.value)}
+                hint={validationRules.creditScore.hint}
+              />
+              <InputWithHint
+                id="creditHistoryLength"
+                label="History Length (Yrs) *"
+                type="number"
+                min="0"
+                max="100"
+                value={formData.creditHistoryLength}
+                onChange={(e) => updateField("creditHistoryLength", e.target.value)}
+                hint={validationRules.creditHistoryLength.hint}
+              />
             </div>
             <div>
               <Label htmlFor="previousLoanDefault" className="text-xs sm:text-sm font-medium">
